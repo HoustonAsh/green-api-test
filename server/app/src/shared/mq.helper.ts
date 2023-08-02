@@ -1,23 +1,35 @@
 import amqp from 'amqplib'
-import { RABBITMQ_URL } from './config'
+import { RABBITMQ_URL, RABBITMQ_QUEUE } from './config'
 
-let mqServer: amqp.Connection | null = null
+let mqChannel: amqp.Channel | null = null
 
-async function getMqServer() {
-  if (mqServer) return mqServer
+async function getMqChannel() {
+  if (mqChannel) return mqChannel
 
   try {
-    mqServer = await amqp.connect(RABBITMQ_URL)
+    const mqServer = await amqp.connect(RABBITMQ_URL)
+    mqChannel = await mqServer.createChannel()
 
-    return mqServer
+    return mqChannel
   } catch (error) {
     console.log(error)
     return false
   }
 }
 
-async function startListenQueue() {
-  const mqServer = await getMqServer()
+export async function startListenQueue() {
+  const channel = await getMqChannel()
+  if (!channel) return
 
-  mqServer
+  await channel.assertQueue(RABBITMQ_QUEUE)
+
+  channel.consume(RABBITMQ_QUEUE, (msg: amqp.ConsumeMessage | null) => {})
+}
+
+export async function requestMq(queue: string, payload: Uint8Array) {
+  try {
+    const channel = await getMqChannel()
+
+    if (!channel) return
+  } catch (e) {}
 }
