@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  server:
+    build: ./server
+    volumes:
+      - ./server/app/src:/app/src
+      - ./server/app/node_modules:/app/node_modules
+    environment:
+      - REINSTALL=no
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+      - rabbitmq
+  
+  mongodb:
+    image: mongo
+    command: mongod --quiet --logpath /dev/null
+    volumes:
+      - db_data:/data/db
+  
+  mongodb-seed:
+    build:
+      context: ./db
+    depends_on:
+      - mongodb
+    profiles:
+      - tools
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+
+volumes:
+  db_data:

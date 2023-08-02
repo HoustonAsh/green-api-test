@@ -1,0 +1,11 @@
+[
+  {
+    "_id": {
+      "$oid": "647ea69d3d8297c3ff2fe8d0"
+    },
+    "name": "Admin",
+    "roleId": "647ea62a3d8297c3ff2fe8cf",
+    "email": "admin@ggmail.com",
+    "password": "$2b$10$X0PiJU7oKUqLFcDot1lkeOS8f2F7Ixl5DEsPAfwd59lE/iJ2DhVky"
+  }
+]

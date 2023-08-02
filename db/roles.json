@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "647ea62a3d8297c3ff2fe8cf"
+  },
+  "name": "Админ",
+  "rules": {
+    "MENU": [{
+      "actions": ["READ"],
+      "resources": ["*"]
+    }]
+  }
+}]
