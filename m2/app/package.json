@@ -11,24 +11,29 @@
     "dev": "npx tsc -w & npx tsc-alias -w & nodemon dist/main.js"
   },
   "dependencies": {
-    "rimraf": "^5.0.0",
+    "amqplib": "^0.10.3",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
+    "events": "^3.3.0",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "express-jwt": "^8.4.1",
     "jsonwebtoken": "^9.0.0",
-    "zod": "^3.21.4",
     "mongodb": "^5.6.0",
-    "bcrypt": "^5.1.0"
+    "rimraf": "^5.0.0",
+    "uuid": "^9.0.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.1",
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/node": "^20.1.1",
-    "@types/cors": "^2.8.13",
-    "@types/bcrypt": "^5.0.0",
-    "typescript": "^5.0.4",
-    "nodemon": "^2.0.22",
-    "tsc-alias": "^1.8.6"
+    "@types/uuid": "^9.0.2",
+    "nodemon": "^3.0.1",
+    "tsc-alias": "^1.8.6",
+    "typescript": "^5.0.4"
   },
   "keywords": [],
   "author": "",

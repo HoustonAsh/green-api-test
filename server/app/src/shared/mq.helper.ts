@@ -1,7 +1,10 @@
 import amqp from 'amqplib'
-import { RABBITMQ_URL, RABBITMQ_QUEUE } from './config'
+import { v4 as uuidv4 } from 'uuid'
+import { RABBITMQ_URL, RABBITMQ_RESP_QUEUE, RABBITMQ_REQ_QUEUE } from './config'
+import { EventEmitter } from 'events'
 
 let mqChannel: amqp.Channel | null = null
+const eventEmitter = new EventEmitter()
 
 async function getMqChannel() {
   if (mqChannel) return mqChannel
@@ -17,19 +20,39 @@ async function getMqChannel() {
   }
 }
 
-export async function startListenQueue() {
-  const channel = await getMqChannel()
-  if (!channel) return
-
-  await channel.assertQueue(RABBITMQ_QUEUE)
-
-  channel.consume(RABBITMQ_QUEUE, (msg: amqp.ConsumeMessage | null) => {})
-}
-
-export async function requestMq(queue: string, payload: Uint8Array) {
+export async function requestMq<T>(queue: string, payload: Buffer) {
   try {
     const channel = await getMqChannel()
 
     if (!channel) return
-  } catch (e) {}
+
+    const replyTo = RABBITMQ_RESP_QUEUE + String(Date.now())
+    const correlationId = uuidv4()
+
+    await channel.assertQueue(queue)
+
+    channel.sendToQueue(queue, payload, {
+      replyTo,
+      correlationId,
+      expiration: 100,
+    })
+
+    await channel.assertQueue(replyTo)
+
+    const result = new Promise<T>((resolve, _) => {
+      eventEmitter.once(correlationId, async data => {
+        resolve(JSON.parse(data))
+      })
+    })
+
+    await channel.consume(replyTo, (msg: amqp.ConsumeMessage | null) => {
+      if (correlationId != msg?.properties.correlationId) return
+      eventEmitter.emit(msg?.properties.correlationId, msg?.content)
+      channel.ack(msg)
+    })
+
+    return result
+  } catch (e) {
+    console.error(e)
+  }
 }

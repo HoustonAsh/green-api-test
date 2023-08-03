@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  server:
+  m1:
     build: ./server
     volumes:
       - ./server/app/src:/app/src
@@ -9,6 +9,17 @@ services:
       - REINSTALL=no
     ports:
       - 3000:3000
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  m2:
+    build: ./m2
+    volumes:
+      - ./m2/app/src:/app/src
+      - ./m2/app/node_modules:/app/node_modules
+    environment:
+      - REINSTALL=no
     depends_on:
       - mongodb
       - rabbitmq

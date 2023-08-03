@@ -1,3 +1,7 @@
+export const RABBITMQ_URL = 'amqp://guest:guest@rabbitmq:5672/'
+export const RABBITMQ_RESP_QUEUE = 'resp_queue'
+export const RABBITMQ_REQ_QUEUE = 'req_queue'
+
 export const MONGO_URL = 'mongodb://mongodb:27017'
 export const MONGO_DB = 'green-api-test'
 export const JWT_SECRET_KEY = 'JWT_SECRET_KEY'
